@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nuestro Amor - Contador Romántico</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;600&display=swap');
+
+    :root {
+      --pink-light: #ffd6e8;
+      --pink-medium: #ff9ec8;
+      --pink-dark: #d94f7c;
+      --white-translucent: rgba(255, 255, 255, 0.8);
+      --shadow-color: rgba(217, 79, 124, 0.6);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #fce7f3, #ffb6d7);
+      color: #3e103e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      user-select: none;
+    }
+
+    .app-container {
+      background: var(--white-translucent);
+      border-radius: 25px;
+      box-shadow: 0 8px 30px var(--shadow-color);
+      padding: 45px 70px;
+      max-width: 550px;
+      width: 95vw;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: saturate(180%) blur(20px);
+    }
+
+    h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 4rem;
+      margin-bottom: 0.2em;
+      color: var(--pink-dark);
+      text-shadow: 1px 1px 5px #ffbddb;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 1.3rem;
+      font-weight: 300;
+      color: var(--pink-medium);
+      margin-bottom: 2.5rem;
+    }
+
+    .date-input-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+
+    label {
+      font-weight: 600;
+      color: var(--pink-dark);
+      font-size: 1.1rem;
+      user-select: none;
+    }
+
+    input[type="date"] {
+      border-radius: 18px;
+      border: 2px solid var(--pink-medium);
+      padding: 10px 16px;
+      font-size: 1.1rem;
+      font-family: 'Poppins', sans-serif;
+      color: var(--pink-dark);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      width: 170px;
+      box-shadow: inset 2px 2px 6px #fff1f7;
+    }
+    input[type="date"]:focus {
+      outline: none;
+      border-color: var(--pink-dark);
+      box-shadow: 0 0 8px var(--pink-dark);
+    }
+
+    button {
+      background-color: var(--pink-dark);
+      border: none;
+      color: white;
+      padding: 12px 28px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 25px;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 6px 15px rgba(217, 79, 124, 0.8);
+      transition: background-color 0.3s ease, transform 0.15s ease;
+    }
+    button:hover:not(:disabled) {
+      background-color: #c33e6a;
+      transform: scale(1.05);
+    }
+    button:disabled {
+      background-color: #f3a5be;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .countdown {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      font-weight: 700;
+      min-height: 120px;
+      color: var(--pink-dark);
+      user-select: text;
+    }
+
+    .time-unit {
+      background: #fff0f7;
+      border-radius: 20px;
+      padding: 22px 28px;
+      min-width: 95px;
+      box-shadow: 0 6px 18px rgba(255, 140, 190, 0.45);
+      transition: transform 0.25s ease;
+    }
+    .time-unit:hover {
+      transform: scale(1.15);
+      box-shadow: 0 9px 25px rgba(255, 77, 136, 0.7);
+    }
+
+    .time-number {
+      font-size: 2.8rem;
+      color: var(--pink-dark);
+      line-height: 1.1;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+    }
+
+    .time-label {
+      margin-top: 8px;
+      font-size: 1.1rem;
+      color: var(--pink-medium);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .footer-text {
+      margin-top: 35px;
+      font-style: italic;
+      font-weight: 300;
+      color: var(--pink-dark);
+      font-size: 1.2rem;
+      user-select: none;
+    }
+
+    /* Background floating hearts */
+    .heart {
+      position: fixed;
+      background: var(--pink-dark);
+      width: 30px;
+      height: 30px;
+      transform: rotate(-45deg);
+      opacity: 0.45;
+      border-radius: 4px;
+      animation-name: floatUp;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+      z-index: 0;
+    }
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: var(--pink-dark);
+      border-radius: 50%;
+    }
+    .heart::before {
+      top: -15px;
+      left: 0;
+    }
+    .heart::after {
+      left: 15px;
+      top: 0;
+    }
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(-45deg);
+        opacity: 0.45;
+      }
+      50% {
+        opacity: 0.9;
+      }
+      100% {
+        transform: translateY(-250px) rotate(-45deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container" role="main" aria-label="Contador romántico de tiempo">
+    <h1>Nuestro Amor</h1>
+    <h2>La fecha donde empezo nuestra historia</h2>
+    
+    <div class="date-input-container">
+      <label for="start-date">Elegir fecha de inicio:</label>
+      <input type="date" id="start-date" aria-describedby="dateHelp" />
+      <button id="calculate-btn" disabled>Calcular</button>
+    </div>
+    <div id="dateHelp" style="font-size:0.85rem; color: var(--pink-medium); margin-bottom: 25px;">
+      Selecciona la fecha en la que comenzó tu historia de amor y presiona Calcular.
+    </div>
+    
+    <div class="countdown" aria-live="polite" aria-atomic="true" id="countdown">
+      <p style="font-weight: 600; color: var(--pink-dark); user-select:none;">Aún no has calculado el tiempo.</p>
+    </div>
+
+    <div class="footer-text">
+      Cada momento contigo es eterno ❤️
+    </div>
+  </div>
+
+  <div aria-hidden="true">
+    <span class="heart" style="left:10%; top:80%; animation-duration:13s; animation-delay: 0s;"></span>
+    <span class="heart" style="left:20%; top:90%; animation-duration:15s; animation-delay: 4s;"></span>
+    <span class="heart" style="left:35%; top:75%; animation-duration:11s; animation-delay: 2s;"></span>
+    <span class="heart" style="left:50%; top:85%; animation-duration:17s; animation-delay: 5s;"></span>
+    <span class="heart" style="left:65%; top:80%; animation-duration:14s; animation-delay: 1s;"></span>
+    <span class="heart" style="left:80%; top:90%; animation-duration:12s; animation-delay: 3s;"></span>
+  </div>
+
+  <script>
+    (function() {
+      const countdownContainer = document.getElementById('countdown');
+      const startDateInput = document.getElementById('start-date');
+      const calculateBtn = document.getElementById('calculate-btn');
+
+      let intervalId = null;
+
+      // Enable the button only if date selected
+      startDateInput.addEventListener('input', () => {
+        calculateBtn.disabled = !startDateInput.value;
+        // Reset countdown and stop interval if date changed
+        if(intervalId){
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+        countdownContainer.innerHTML = '<p style="font-weight: 600; color: var(--pink-dark); user-select:none;">Aún no has calculado el tiempo.</p>';
+      });
+
+      // Helper: Calculate detailed time difference
+      function calculateTimeDifference(startDate, endDate) {
+        let start = new Date(startDate.getTime());
+        let end = new Date(endDate.getTime());
+        if (end < start) return null;
+
+        const diff = { years:0, months:0, weeks:0, days:0, hours:0, minutes:0, seconds:0 };
+
+        while (new Date(start.getFullYear()+1, start.getMonth(), start.getDate()) <= end) {
+          start = new Date(start.getFullYear()+1, start.getMonth(), start.getDate());
+          diff.years++;
+        }
+
+        while (new Date(start.getFullYear(), start.getMonth()+1, start.getDate()) <= end) {
+          start = new Date(start.getFullYear(), start.getMonth()+1, start.getDate());
+          diff.months++;
+        }
+
+        let msDiff = end - start;
+
+        diff.weeks = Math.floor(msDiff / (1000 * 60 * 60 * 24 * 7));
+        msDiff -= diff.weeks * 1000 * 60 * 60 * 24 * 7;
+
+        diff.days = Math.floor(msDiff / (1000 * 60 * 60 * 24));
+        msDiff -= diff.days * 1000 * 60 * 60 * 24;
+
+        diff.hours = Math.floor(msDiff / (1000 * 60 * 60));
+        msDiff -= diff.hours * 1000 * 60 * 60;
+
+        diff.minutes = Math.floor(msDiff / (1000 * 60));
+        msDiff -= diff.minutes * 1000 * 60;
+
+        diff.seconds = Math.floor(msDiff / 1000);
+
+        return diff;
+      }
+
+      // Create HTML block for a time unit
+      function createUnitBlock(label, value) {
+        return `
+          <div class="time-unit" role="group" aria-label="${value} ${label}">
+            <div class="time-number">${value}</div>
+            <div class="time-label">${label}</div>
+          </div>
+        `;
+      }
+
+      // Render all time units in countdown container
+      function renderCountdown(diff) {
+        if (!diff) {
+          countdownContainer.innerHTML = `<p style="font-weight: 600; color: var(--pink-dark);">Fecha inválida o una fecha en el futuro no es válida.</p>`;
+          return;
+        }
+        const html = 
+          createUnitBlock('Años', diff.years) +
+          createUnitBlock('Meses', diff.months) +
+          createUnitBlock('Semanas', diff.weeks) +
+          createUnitBlock('Días', diff.days) +
+          createUnitBlock('Horas', diff.hours) +
+          createUnitBlock('Minutos', diff.minutes) +
+          createUnitBlock('Segundos', diff.seconds);
+        countdownContainer.innerHTML = html;
+      }
+
+      // Perform countdown update
+      function updateCountdown() {
+        const dateStr = startDateInput.value;
+        if (!dateStr) {
+          countdownContainer.innerHTML = `<p style="font-weight: 600; color: var(--pink-dark);">Seleccione una fecha primero.</p>`;
+          return;
+        }
+
+        const startDate = new Date(dateStr + 'T00:00:00');
+        const now = new Date();
+
+        if (isNaN(startDate.getTime())) {
+          countdownContainer.innerHTML = `<p style="font-weight: 600; color: var(--pink-dark);">La fecha no es válida.</p>`;
+          return;
+        }
+
+        if (startDate > now) {
+          countdownContainer.innerHTML = `<p style="font-weight: 600; color: var(--pink-dark);">La fecha está en el futuro.</p>`;
+          return;
+        }
+
+        const diff = calculateTimeDifference(startDate, now);
+        renderCountdown(diff);
+      }
+
+      // Calculate button click handler
+      calculateBtn.addEventListener('click', () => {
+        calculateBtn.disabled = true;
+        updateCountdown();
+        if(intervalId) clearInterval(intervalId);
+        intervalId = setInterval(updateCountdown, 1000);
+      });
+
+      // On page load, clear and disable button
+      window.addEventListener('load', () => {
+        calculateBtn.disabled = true;
+        countdownContainer.innerHTML = '<p style="font-weight: 600; color: var(--pink-dark); user-select:none;">Selecciona la fecha y presiona Calcular.</p>';
+      });
+    })();
+  </script>
+</body>
+</html>
+
